@@ -48,8 +48,6 @@ class Productlist extends Component
         $searchName = '%' . $this->searchName . '%';
         if ($this->searchSize == "0") $searchSize = '%%';
         else $searchSize = $this->searchSize;
-
-
         $this->products = Product::where('category_id', $this->category->id)->
                                     where('name', 'like', $searchName)->
                                     where('size', 'like', $searchSize)->orderBy('name')->get();

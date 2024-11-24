@@ -9,14 +9,14 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class Productmng extends Component
 {
     use WithFileUploads;
-    public $products, $name, $size, $price, $remains, $category_id, $categorylist, $product_id;
+    public $products, $name, $size, $price, $remains, $category_id, $categorylist, $product_id, $external_id;
     public $searchName, $searchSize = "0", $searchCategory = "0";
 
-    // #[Validate(['images.*' => 'required|image|max:1024'])]
     public $images = [];
 
     public function resetFilterFields()
@@ -100,6 +100,38 @@ class Productmng extends Component
         $this->resetInputFields();
     }
 
+    public function getRemains()
+    {
+        $tok = json_decode($this->getToken());
+        $stocks = json_decode($this->getStock($tok->access_token));
+        if (count($stocks->rows) == 0) {
+            foreach (Product::all() as $product) {
+                $product->remains = 0;
+                $product->save();
+            }
+        } else {
+            foreach ($stocks->rows as $row) {
+                $product = Product::where('external_id', $row->product_id)->get();
+                $product->remains = $row->stock;
+                $product->save();
+            }
+        }
+        session()->flash('message', 'Остатки обновлены!');
+    }
+
+    public function getToken()
+    {
+        $response = Http::withBasicAuth('dementevamv@shalom', 'MVDementeva2020')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
+        return $response;
+    }
+
+    public function getStock($token)
+    {
+        //$response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/entity/assortment?filter=id=' . $external_id);
+        $response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/report/stock/bystore');
+        return $response;
+    }
+
     public function render()
     {
         $searchName = '%' . $this->searchName . '%';
@@ -110,7 +142,6 @@ class Productmng extends Component
         if ($this->searchCategory == "0") $searchCategory = '%%';
         else $searchCategory = $this->searchCategory;
 
-        // $this->categorylist = Category::all()->pluck('name');
         $this->categorylist = Category::all();
         $this->products = Product::where('name', 'like', $searchName)
             ->where('size', 'like', $searchSize)

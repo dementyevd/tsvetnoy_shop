@@ -8,6 +8,9 @@
                 </div>
             @endif
         </div>
+        <div class="my-3">
+            <button class="btn btn-primary" wire:click.prevent="getRemains">Загрузить остатки</button>
+        </div>
         <h2>Список товаров</h2>
         <div class="form-group my-3">
             <input type="text" class="form-control" placeholder="Введите название товара" wire:model="name">
