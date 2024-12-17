@@ -127,7 +127,6 @@ class Productmng extends Component
 
     public function getStock($token)
     {
-        //$response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/entity/assortment?filter=id=' . $external_id);
         $response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/report/stock/bystore');
         return $response;
     }
