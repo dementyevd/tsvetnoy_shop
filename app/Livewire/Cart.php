@@ -8,6 +8,7 @@ use App\Models\Orderline;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class Cart extends Component
 {
@@ -58,15 +59,74 @@ class Cart extends Component
                 ]);
             }
 
+            $arr = [];
             foreach ($this->products as $item) {
                 $item->Product->update(['remains' => $item->Product->remains - 1]);
+                $arr[] = array(
+                    "quantity" => floatval($item->quantity),
+                    "price" => floatval($item->Product->price * 100),
+                    "discount" => 0,
+                    "vat" => 0,
+                    "assortment" => array(
+                        "meta" => array(
+                            "href" => "https://api.moysklad.ru/api/remap/1.2/entity/product/" . $item->Product->external_id,
+                            "type" => "product",
+                            "mediaType" => "application/json"
+                        )
+                    ),
+                    "reserve" => floatval($item->quantity)
+                );
                 ModelsCart::destroy($item->id);
             }
+
+            $str = array(
+                "organization" => array(
+                    "meta" => array(
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/organization/9a882c52-19b8-11eb-0a80-06c50004c997",
+                        "type" => "organization",
+                        "mediaType" => "application/json"
+                    )
+                ),
+                "code" => strval($newOrder->id),
+                "moment" => $newOrder->orderdate->format('Y-m-d H:i:s'),
+                "applicable" => false,
+                "vatEnabled" => false,
+                "agent" => array(
+                    "meta" => array(
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/counterparty/870e2c89-2e73-11eb-0a80-01df00075b4f",
+                        "type" => "counterparty",
+                        "mediaType" => "application/json"
+                    )
+                ),
+                "state" => array(
+                    "meta" => array(
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/4102d27f-ab05-11e4-90a2-8ecb0016c16c",
+                        "type" => "state",
+                        "mediaType" => "application/json"
+                    )
+                ),
+                "positions" => $arr
+            );
+            $response = $this->CreateCustomerOrder($str);
+            //session()->flash('message', $response);
 
             $this->redirectRoute('myOrders');
         } else {
             session()->flash('message', 'Корзина пуста!');
         }
+    }
+
+    public function getToken()
+    {
+        $response = Http::withBasicAuth('dementevamv@shalom', 'MVDementeva2020')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
+        return $response;
+    }
+
+    public function CreateCustomerOrder($jsonStr)
+    {
+        $tok = json_decode($this->getToken());
+        $response = Http::withToken($tok->access_token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/entity/customerorder', $jsonStr);
+        return $response;
     }
 
     public function CalcSum()
