@@ -35,6 +35,7 @@ class Productmng extends Component
         $this->category_id = 0;
         $this->images = null;
         $this->product_id = null;
+        $this->external_id = null;
     }
 
     public function edit($id)
@@ -46,6 +47,7 @@ class Productmng extends Component
         $this->price = $edited->price;
         $this->remains = $edited->remains;
         $this->category_id = $edited->Category->name;
+        $this->external_id = $edited->external_id;
     }
 
     public function delete($id)
@@ -67,6 +69,7 @@ class Productmng extends Component
             'price' => 'required',
             'remains' => 'required',
             'category_id' => 'required',
+            'external_id' => 'required',
             'images.*' => 'required|image|mimes:jpg,jpeg,png,svg',
         ]);
 

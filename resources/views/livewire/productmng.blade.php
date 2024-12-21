@@ -48,6 +48,10 @@
             <input type="number" class="form-control" placeholder="Укажите остаток" wire:model="remains">
             @error('remains') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
+        <div class="form-group my-3">
+            <input type="text" class="form-control" placeholder="Укажите GUID из МойСклад" wire:model="external_id">
+            @error('external_id') <span class="text-danger">{{ $message }}</span> @enderror
+        </div>
       
         <div class="d-flex">
             <button type="submit" class="btn btn-primary my-3">Сохранить</button>
