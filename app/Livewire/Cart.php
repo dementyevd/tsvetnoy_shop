@@ -82,7 +82,7 @@ class Cart extends Component
             $str = array(
                 "organization" => array(
                     "meta" => array(
-                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/organization/9a882c52-19b8-11eb-0a80-06c50004c997",
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/organization/22d032c0-da65-11ef-0a80-026500118280",
                         "type" => "organization",
                         "mediaType" => "application/json"
                     )
@@ -93,14 +93,14 @@ class Cart extends Component
                 "vatEnabled" => false,
                 "agent" => array(
                     "meta" => array(
-                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/counterparty/870e2c89-2e73-11eb-0a80-01df00075b4f",
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/counterparty/239300c1-da65-11ef-0a80-0265001182ae",
                         "type" => "counterparty",
                         "mediaType" => "application/json"
                     )
                 ),
                 "state" => array(
                     "meta" => array(
-                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/4102d27f-ab05-11e4-90a2-8ecb0016c16c",
+                        "href" => "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/states/239dc849-da65-11ef-0a80-0265001182c4",
                         "type" => "state",
                         "mediaType" => "application/json"
                     )
@@ -118,7 +118,7 @@ class Cart extends Component
 
     public function getToken()
     {
-        $response = Http::withBasicAuth('dementevamv@shalom', 'MVDementeva2020')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
+        $response = Http::withBasicAuth('admin@dementyevd', 'P@$$worD3085')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
         return $response;
     }
 
