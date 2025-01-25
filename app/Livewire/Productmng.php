@@ -107,14 +107,14 @@ class Productmng extends Component
     {
         $tok = json_decode($this->getToken());
         $stocks = json_decode($this->getStock($tok->access_token));
-        if (count($stocks->rows) == 0) {
+        if (count($stocks) == 0) {
             foreach (Product::all() as $product) {
                 $product->remains = 0;
                 $product->save();
             }
         } else {
-            foreach ($stocks->rows as $row) {
-                $product = Product::where('external_id', $row->product_id)->get();
+            foreach ($stocks as $row) {
+                $product = Product::where('external_id', $row->assortmentId)->first();
                 $product->remains = $row->stock;
                 $product->save();
             }
@@ -130,7 +130,7 @@ class Productmng extends Component
 
     public function getStock($token)
     {
-        $response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/report/stock/bystore');
+        $response = Http::withToken($token)->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->get('https://api.moysklad.ru/api/remap/1.2/report/stock/all/current');
         return $response;
     }
 
