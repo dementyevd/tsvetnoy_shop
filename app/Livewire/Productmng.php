@@ -124,7 +124,7 @@ class Productmng extends Component
 
     public function getToken()
     {
-        $response = Http::withBasicAuth('admin@dementyevd', 'P@$$worD3085')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
+        $response = Http::withBasicAuth('', '')->withHeader('Accept-Encoding', 'gzip')->accept('application/json;charset=utf-8')->post('https://api.moysklad.ru/api/remap/1.2/security/token');
         return $response;
     }
 
